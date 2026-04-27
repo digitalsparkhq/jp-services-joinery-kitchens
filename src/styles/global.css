@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  /* Classy Base: Deep rich darks */
+  --color-brand-dark: #0a0a0a;
+  --color-brand-black: #000000;
+  
+  /* Elegant Accent: Brushed Brass / Champagne Gold */
+  --color-brand-accent: #C5A059; 
+  --color-brand-accent-light: #DFB96E; 
+  --color-brand-accent-dark: #9B7D46; 
+  
+  /* Clean corporate font */
+  --font-sans: 'Inter', sans-serif;
+}

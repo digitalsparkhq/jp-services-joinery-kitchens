@@ -1,0 +1,177 @@
+---
+// src/components/Hero.astro
+---
+
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-dark pt-32 pb-16" id="hero-section">
+  
+  <div class="absolute inset-0 overflow-hidden z-0">
+    <div id="bg-bottom" class="absolute inset-0 bg-cover bg-center animate-hero-zoom" style="background-image: url('/images/hero1.jpg');"></div>
+    <div id="puzzle-layer" class="absolute inset-0 animate-hero-zoom"></div>
+  </div>
+
+  <div class="absolute inset-0 bg-brand-dark/20 z-10 pointer-events-none"></div>
+  
+  <div class="absolute inset-0 bg-gradient-to-r from-brand-dark/80 via-brand-dark/40 to-transparent z-10 pointer-events-none mix-blend-multiply"></div>
+  
+  <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/70 via-transparent to-transparent z-10 pointer-events-none"></div>
+
+  <div class="container mx-auto px-6 md:px-12 relative z-30 text-center max-w-5xl mt-8">
+    
+    <div class="animate-fade-up">
+      <span class="inline-block py-1.5 px-4 bg-brand-accent text-brand-dark font-bold text-sm mb-6 rounded-sm uppercase tracking-widest shadow-md">
+        Quality craftsmanship from the floor up
+      </span>
+      
+      <h1 class="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-tight mb-6 drop-shadow-2xl uppercase shadow-black/50">
+        Premium Joinery, Kitchens & <span class="text-brand-accent-light">LVT Flooring</span>.
+      </h1>
+      
+      <p class="text-xl md:text-2xl text-white/95 mb-10 font-medium max-w-3xl mx-auto drop-shadow-xl shadow-black/50 leading-relaxed">
+        Expert installations across <span class="text-white font-bold border-b border-brand-accent/50 pb-0.5">Hull and surrounding areas</span>. From flawless subfloor preparation to the final fitting, we bring your vision to life.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-16">
+        <button class="quote-trigger bg-brand-accent hover:bg-brand-accent-light text-brand-dark text-lg font-bold py-4 px-10 rounded flex items-center justify-center transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 uppercase tracking-wider cursor-pointer border-0">
+          <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+          Get a Free Quote
+        </button>
+        <a href="tel:+447787628086" class="bg-brand-dark/40 backdrop-blur-md hover:bg-brand-dark/80 text-white border-2 border-brand-accent/70 hover:border-brand-accent text-lg font-bold py-4 px-10 rounded flex items-center justify-center transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-1 uppercase tracking-wider cursor-pointer">
+          Call 07787 628086
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-white font-bold bg-brand-dark/50 p-6 rounded-xl backdrop-blur-md border border-white/10 max-w-4xl mx-auto animate-fade-up animation-delay-200 shadow-2xl">
+      <div class="flex flex-col items-center justify-center">
+        <span class="text-brand-accent-light text-4xl mb-3 drop-shadow-md">💯</span>
+        Free Estimates
+      </div>
+      <div class="flex flex-col items-center justify-center border-y sm:border-y-0 sm:border-x border-white/20 py-4 sm:py-0">
+        <span class="text-brand-accent-light text-4xl mb-3 drop-shadow-md">🛠️</span>
+        Expert Subfloor Prep
+      </div>
+      <div class="flex flex-col items-center justify-center">
+        <span class="text-brand-accent-light text-4xl mb-3 drop-shadow-md">🏆</span>
+        Highest Standard Finish
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Smooth Fade Up for text and badges */
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1.5s ease-out forwards;
+  }
+  .animation-delay-200 { animation-delay: 400ms; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Continuous Slow Zoom for the background layers */
+  @keyframes heroZoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+  }
+  .animate-hero-zoom {
+    animation: heroZoom 15s linear infinite alternate;
+  }
+</style>
+
+<script>
+  // 1. Setup the Puzzle Effect
+  const images = [
+    '/images/hero1.jpg', 
+    '/images/hero2.jpg', 
+    '/images/hero3.jpg'
+  ];
+  
+  let currentIndex = 0;
+  const puzzleLayer = document.getElementById('puzzle-layer');
+  const bottomBg = document.getElementById('bg-bottom');
+  
+  const cols = 6;
+  const rows = 4;
+
+  function initPuzzle() {
+    if(!puzzleLayer) return;
+    
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const tile = document.createElement('div');
+        tile.className = 'absolute inset-0 bg-cover bg-center';
+        tile.style.backgroundImage = `url(${images[0]})`;
+        tile.style.transition = 'opacity 0.4s ease-out';
+        
+        // Calculate the exact borders for this specific puzzle piece
+        const top = (r / rows) * 100;
+        const bottom = 100 - ((r + 1) / rows) * 100;
+        const left = (c / cols) * 100;
+        const right = 100 - ((c + 1) / cols) * 100;
+        
+        tile.style.clipPath = `inset(${top}% ${right}% ${bottom}% ${left}%)`;
+        puzzleLayer.appendChild(tile);
+      }
+    }
+  }
+
+  function triggerPuzzleTransition() {
+    if(!puzzleLayer || !bottomBg) return;
+
+    const nextIndex = (currentIndex + 1) % images.length;
+    
+    // Put the next image underneath
+    bottomBg.style.backgroundImage = `url(${images[nextIndex]})`;
+
+    // Shuffle the tiles so they fade out randomly
+    const tiles = Array.from(puzzleLayer.children) as HTMLElement[];
+    const shuffledTiles = [...tiles].sort(() => Math.random() - 0.5);
+
+    // Fade out tiles sequentially
+    shuffledTiles.forEach((tile, i) => {
+      setTimeout(() => {
+        tile.style.opacity = '0';
+      }, i * 30); 
+    });
+
+    // Reset everything instantly once the effect finishes
+    setTimeout(() => {
+      tiles.forEach(tile => {
+        tile.style.transition = 'none'; 
+        tile.style.backgroundImage = `url(${images[nextIndex]})`;
+        tile.style.opacity = '1';
+      });
+      
+      // Force browser to register the instant reset
+      void puzzleLayer.offsetWidth;
+      
+      // Turn transitions back on for the next cycle
+      tiles.forEach(tile => {
+        tile.style.transition = 'opacity 0.4s ease-out';
+      });
+      
+      currentIndex = nextIndex;
+    }, (tiles.length * 30) + 500);
+  }
+
+  initPuzzle();
+  
+  // Triggers the slideshow every 6 seconds
+  setInterval(triggerPuzzleTransition, 6000);
+
+  // 2. Open Quote Modal Logic
+  const heroQuoteBtns = document.querySelectorAll('.open-quote');
+  const quoteModal = document.querySelector('#quote-modal') as HTMLDialogElement;
+
+  heroQuoteBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(quoteModal) quoteModal.showModal();
+    });
+  });

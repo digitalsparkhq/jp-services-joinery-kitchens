@@ -1,0 +1,165 @@
+---
+// src/components/Gallery.astro
+
+// Generating the array for work1.jpg through work9.jpg
+const images = Array.from({ length: 9 }, (_, i) => ({
+  src: `/images/work${i + 1}.jpg`,
+  alt: `JPservices Project ${i + 1} - Premium Joinery & Flooring`
+}));
+---
+
+<section id="gallery" class="py-24 bg-white relative overflow-hidden">
+  
+  <div class="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10">
+    
+    <div class="text-center mb-16 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-dark font-bold text-sm tracking-wider mb-6">
+        OUR PORTFOLIO
+      </div>
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-brand-dark uppercase tracking-tight">
+        Recent <span class="text-brand-accent">Transformations.</span>
+      </h2>
+      <p class="text-lg text-stone-600 leading-relaxed">
+        From bespoke joinery solutions to high-end flooring installations, explore the quality and precision we bring to every home in Hull.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      {images.map((image, index) => (
+        <div 
+          class="reveal-item opacity-0 translate-y-12 transition-all duration-700 ease-out relative group cursor-pointer overflow-hidden rounded-xl bg-stone-100 aspect-square shadow-sm" 
+          data-gallery-item
+          style={`transition-delay: ${index * 75}ms;`}
+        >
+          <img 
+            src={image.src} 
+            alt={image.alt} 
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            loading="lazy"
+          />
+          
+          <div class="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+             <div class="w-12 h-12 rounded-full bg-brand-accent text-brand-dark flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+             </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-16 text-center">
+       <button class="quote-trigger cursor-pointer bg-brand-dark hover:bg-brand-accent text-white hover:text-brand-dark font-bold py-4 px-10 rounded shadow-lg transition-all duration-300 uppercase tracking-widest border-0">
+          Start Your Transformation
+       </button>
+    </div>
+  </div>
+</section>
+
+<div id="lightbox" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-sm hidden items-center justify-center p-4 md:p-12 opacity-0 transition-opacity duration-300">
+  
+  <button id="close-lightbox" class="absolute top-6 right-6 z-[210] text-white/70 hover:text-brand-accent transition-colors cursor-pointer p-2 border-0 bg-transparent">
+    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+  </button>
+
+  <div class="relative max-w-5xl w-full h-full flex items-center justify-center" id="lightbox-container">
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300" />
+  </div>
+</div>
+
+<script>
+  // --- SCROLL REVEAL LOGIC ---
+  const revealItems = document.querySelectorAll('.reveal-item');
+  
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      // When the image comes into view
+      if (entry.isIntersecting) {
+        // Remove the hidden classes and add the visible ones
+        entry.target.classList.remove('opacity-0', 'translate-y-12');
+        entry.target.classList.add('opacity-100', 'translate-y-0');
+        
+        // Stop observing it so it doesn't animate out and in again
+        observer.unobserve(entry.target); 
+      }
+    });
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1 // Triggers when 10% of the image is visible
+  });
+
+  revealItems.forEach(item => {
+    revealObserver.observe(item);
+  });
+
+  // --- LIGHTBOX LOGIC ---
+  const galleryItems = document.querySelectorAll('[data-gallery-item]');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+  const closeBtn = document.getElementById('close-lightbox');
+
+  const openLightbox = (src: string, alt: string) => {
+    if (!lightbox || !lightboxImg) return;
+    
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    
+    // Animate in
+    setTimeout(() => {
+      lightbox.classList.remove('opacity-0');
+      lightboxImg.classList.remove('scale-95');
+      lightboxImg.classList.add('scale-100');
+    }, 10);
+    
+    document.body.style.overflow = 'hidden'; // Stop scrolling
+  };
+
+  const closeLightbox = () => {
+    if (!lightbox || !lightboxImg) return;
+    
+    lightbox.classList.add('opacity-0');
+    lightboxImg.classList.remove('scale-100');
+    lightboxImg.classList.add('scale-95');
+    
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+    }, 300);
+    
+    document.body.style.overflow = ''; // Restore scrolling
+  };
+
+  // Click on gallery item
+  galleryItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const img = item.querySelector('img');
+      if (img) openLightbox(img.src, img.alt);
+    });
+  });
+
+  // Close on X click
+  closeBtn?.addEventListener('click', closeLightbox);
+
+  // Close on clicking OUTSIDE the image
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox || e.target === document.getElementById('lightbox-container')) {
+      closeLightbox();
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+<style>
+  /* Ensuring the lightbox image doesn't get squashed */
+  #lightbox-img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+</style>
